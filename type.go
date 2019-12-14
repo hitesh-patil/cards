@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
+	"math/rand"
 	"os"
 	"strings"
+	"time"
 )
 
 type cardArr []string
@@ -46,8 +47,17 @@ func byteToString(byteArr []byte) string {
 func newDeckFromFile(fileName string) cardArr {
 	content, err := ioutil.ReadFile(fileName)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Error: ", err)
 		os.Exit(1)
 	}
 	return cardArr(strings.Split(byteToString(content), ","))
+}
+
+func (c cardArr) shuffle() {
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source)
+	for i := range c {
+		newPosition := r.Intn(len(c) - 1)
+		c[i], c[newPosition] = c[newPosition], c[i]
+	}
 }
